@@ -18,8 +18,20 @@ if(!file_exists("languages/utf8converted")){
         fclose($handle);
       }
     }
-    $h = fopen("languages/utf8converted","w");
-    fclose($h);
+	$contents = file("misc/fndatabase/fn_i18n/i18n.php");
+	for($i=0;$i<count($contents);$i++){
+      $contents[$i] = preg_replace("/ISO\-8859\-1/i","UTF-8",$contents[$i]);
+      // before re-encoding, check if already utf-8 encoded...
+      if (mb_strlen($contents[$i]) != strlen($contents[$i])) {
+        $contents[$i] = utf8_encode($contents[$i]);
+      }
+	}
+    $contents = implode("",$contents);
+    $handle = fopen("misc/fndatabase/fn_i18n/i18n.php", "w");
+    fwrite($handle,$contents);
+    fclose($handle);
+    $handle = fopen("languages/utf8converted","w");
+    fclose($handle);
   }
   else { echo "<button onclick='location.href=\"index.php?utf8encode=true\"'>CONVERT FLATNUX LANGUAGE FILES TO UTF-8 AND SET CHARSET TO UTF-8</button>"; }
 }
